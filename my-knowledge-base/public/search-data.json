@@ -1,0 +1,8 @@
+[
+  {
+    "id": "welcome",
+    "title": "欢迎来到我的知识库",
+    "slug": "welcome",
+    "content": "---\r\ntitle: '欢迎来到我的知识库'\r\ndate: '2024-01-20'\r\ntags: ['欢迎', '介绍', '开始']\r\ncategory: '介绍'\r\nexcerpt: '这是我的第一篇知识库文章，完全基于GitHub Pages构建。'\r\n---\r\n\r\n# 欢迎来到我的知识库\r\n\r\n这是我的第一篇知识库文章，完全基于 **GitHub Pages** 构建。\r\n\r\n## 技术栈\r\n\r\n这个知识库使用以下技术构建：\r\n\r\n- **Next.js 14** - React框架，静态导出模式\r\n- **TypeScript** - 类型安全\r\n- **Tailwind CSS** - 实用优先的CSS框架\r\n- **GitHub Pages** - 免费静态网站托管\r\n\r\n## 功能特点\r\n\r\n1. **完全静态** - 无需服务器，加载速度快\r\n2. **Markdown支持** - 使用熟悉的Markdown语法写作\r\n3. **自动部署** - 通过GitHub Actions自动构建和部署\r\n4. **响应式设计** - 在手机、平板、电脑上都有良好体验\r\n\r\n## 如何添加新文章？\r\n\r\n在 `content/posts/` 目录下创建 `.md` 文件，按照上面的Front Matter格式编写即可。\r\n\r\n---\r\n\r\n感谢阅读！欢迎关注我的知识库更新。"
+  }
+]
