@@ -18,132 +18,105 @@
             padding: 30px;
             margin-top: 20px;
         }
-        .status {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            margin-left: 10px;
+        .nav-item {
+            display: block;
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid #e1e4e8;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #0969da;
+            transition: all 0.2s;
         }
-        .status-ok { background: #dafbe1; color: #1a7f37; }
-        .status-error { background: #ffebe9; color: #cf222e; }
-        .status-pending { background: #fff8c5; color: #9a6700; }
-        a { color: #0969da; text-decoration: none; }
-        a:hover { text-decoration: underline; }
-        .check-link { 
-            display: inline-block; 
-            margin-left: 10px; 
-            font-size: 12px; 
-            color: #656d76; 
+        .nav-item:hover {
+            background: #f6f8fa;
+            border-color: #0969da;
+        }
+        .nav-title {
+            font-weight: 600;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav-desc {
+            color: #656d76;
+            font-size: 14px;
+            margin-top: 5px;
         }
     </style>
 </head>
 <body>
     <h1>📚 知识库导航</h1>
-    <p>项目链接状态检查：</p>
+    <p>选择要访问的项目：</p>
     
     <div class="container">
-        <h3>🔗 链接状态</h3>
+        <a href="./" class="nav-item">
+            <div class="nav-title">
+                🏠 导航首页
+            </div>
+            <div class="nav-desc">当前页面，项目入口</div>
+        </a>
         
-        <div style="margin: 20px 0;">
-            <strong>当前导航页：</strong>
-            <a href="https://limengda-ops.github.io/knowledge/" target="_blank">
-                https://limengda-ops.github.io/knowledge/
-            </a>
-            <span class="status status-ok">正常</span>
-        </div>
+        <a href="./my-knowledge-base/" class="nav-item">
+            <div class="nav-title">
+                📖 我的知识库
+            </div>
+            <div class="nav-desc">技术文档、笔记和知识整理</div>
+        </a>
         
-        <div style="margin: 20px 0;">
-            <strong>我的知识库首页：</strong>
-            <a href="https://limengda-ops.github.io/my-knowledge-base/" target="_blank" id="knowledge-link">
-                https://limengda-ops.github.io/my-knowledge-base/
-            </a>
-            <span class="status status-error" id="knowledge-status">404 错误</span>
-            <span class="check-link">
-                ⚠️ 需要开启 GitHub Pages
-            </span>
-        </div>
-        
-        <div style="margin: 20px 0;">
-            <strong>本仓库源码：</strong>
-            <a href="https://github.com/limengda-ops/knowledge" target="_blank">
-                https://github.com/limengda-ops/knowledge
-            </a>
-            <span class="status status-ok">正常</span>
-        </div>
-        
-        <div style="margin: 20px 0;">
-            <strong>知识库源代码：</strong>
-            <a href="https://github.com/limengda-ops/my-knowledge-base" target="_blank">
-                https://github.com/limengda-ops/my-knowledge-base
-            </a>
-            <span class="status status-ok">正常</span>
-        </div>
+        <a href="https://github.com/limengda-ops/knowledge" target="_blank" class="nav-item">
+            <div class="nav-title">
+                💾 仓库源代码
+            </div>
+            <div class="nav-desc">查看所有项目源代码 (GitHub)</div>
+        </a>
     </div>
     
     <div class="container" style="background: #f6f8fa; margin-top: 30px;">
-        <h3>🔧 问题修复步骤</h3>
+        <h3>🔧 重要提示</h3>
+        <p>如果 <strong>我的知识库</strong> 链接无法访问，请检查：</p>
         <ol>
-            <li>访问 <a href="https://github.com/limengda-ops/my-knowledge-base/settings/pages" target="_blank">
-                my-knowledge-base 仓库的 Pages 设置
-            </a></li>
-            <li>在 <strong>Source</strong> 部分选择部署分支（如 main）</li>
-            <li>选择文件夹（如 / (root)）</li>
-            <li>点击 <strong>Save</strong></li>
-            <li>等待 1-2 分钟，然后刷新此页面</li>
+            <li><code>my-knowledge-base</code> 目录下是否有 <code>index.html</code> 文件</li>
+            <li>路径是否正确：<code>./my-knowledge-base/</code>（相对路径）</li>
+            <li>完整链接应该是：<code>https://limengda-ops.github.io/knowledge/my-knowledge-base/</code></li>
         </ol>
         
-        <p><strong>或者：</strong>将知识库文件移到当前仓库的子目录中：</p>
+        <p><strong>快速测试：</strong></p>
         <ul>
-            <li>在 <code>knowledge</code> 仓库创建 <code>docs/</code> 目录</li>
-            <li>将知识库文件复制到 <code>docs/</code></li>
-            <li>修改 Pages 设置，部署目录改为 <code>/docs</code></li>
-            <li>访问链接：<code>https://limengda-ops.github.io/knowledge/docs/</code></li>
+            <li><a href="./my-knowledge-base/" target="_blank">点击这里访问知识库</a></li>
+            <li>或直接访问：<code id="full-url">正在生成...</code></li>
         </ul>
     </div>
     
     <footer style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eaecef; color: #6a737d; font-size: 14px;">
-        最后更新: 2024年 | 使用 GitHub Pages 部署 | 
-        页面状态：<span id="page-status">正在检测...</span>
+        最后更新: 2024年 | 使用 GitHub Pages 部署
     </footer>
 
     <script>
-        // 检测知识库页面是否可用
-        function checkKnowledgePage() {
-            const link = document.getElementById('knowledge-link');
-            const status = document.getElementById('knowledge-status');
-            const pageStatus = document.getElementById('page-status');
-            
-            // 创建隐藏的iframe来检测页面
-            const testFrame = document.createElement('iframe');
-            testFrame.style.display = 'none';
-            testFrame.src = link.href;
-            document.body.appendChild(testFrame);
-            
-            testFrame.onload = function() {
-                status.textContent = '正常';
-                status.className = 'status status-ok';
-                pageStatus.textContent = '所有链接正常';
-                pageStatus.style.color = '#1a7f37';
-            };
-            
-            testFrame.onerror = function() {
-                status.textContent = '404 错误';
-                status.className = 'status status-error';
-                pageStatus.textContent = '有链接不可用';
-                pageStatus.style.color = '#cf222e';
-            };
-            
-            // 10秒后移除iframe
-            setTimeout(() => {
-                if (document.body.contains(testFrame)) {
-                    document.body.removeChild(testFrame);
-                }
-            }, 10000);
-        }
+        // 显示完整URL
+        const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '');
+        document.getElementById('full-url').textContent = baseUrl + '/my-knowledge-base/';
         
-        // 页面加载后开始检测
-        window.onload = checkKnowledgePage;
+        // 测试链接是否有效
+        document.addEventListener('DOMContentLoaded', function() {
+            const testLink = document.querySelector('a[href="./my-knowledge-base/"]');
+            
+            fetch('./my-knowledge-base/')
+                .then(response => {
+                    if (response.ok) {
+                        testLink.innerHTML = '<div class="nav-title">✅ 📖 我的知识库 (可访问)</div>' + 
+                                           '<div class="nav-desc">技术文档、笔记和知识整理</div>';
+                    } else {
+                        testLink.innerHTML = '<div class="nav-title">⚠️ 📖 我的知识库 (暂时无法访问)</div>' + 
+                                           '<div class="nav-desc">请确保 my-knowledge-base 目录下有 index.html 文件</div>';
+                    }
+                })
+                .catch(error => {
+                    testLink.innerHTML = '<div class="nav-title">❌ 📖 我的知识库 (访问失败)</div>' + 
+                                       '<div class="nav-desc">' + error.message + '</div>';
+                });
+        });
     </script>
 </body>
 </html>
