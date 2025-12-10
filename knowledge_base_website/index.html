@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechKnowledge - 科技知识库</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#06b6d4',
+                        secondary: '#6366f1',
+                        accent: '#10b981',
+                        dark: '#0f172a',
+                        light: '#f8fafc'
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                        'gradient': 'gradient 8s ease infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        glow: {
+                            '0%': { boxShadow: '0 0 20px rgba(6, 182, 212, 0.5)' },
+                            '100%': { boxShadow: '0 0 30px rgba(6, 182, 212, 0.8), 0 0 40px rgba(6, 182, 212, 0.5)' },
+                        },
+                        gradient: {
+                            '0%': { backgroundPosition: '0% 50%' },
+                            '50%': { backgroundPosition: '100% 50%' },
+                            '100%': { backgroundPosition: '0% 50%' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .glass-effect {
+                backdrop-filter: blur(10px);
+                background: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            }
+            .text-gradient {
+                background: linear-gradient(90deg, #06b6d4, #6366f1);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+            .bg-gradient-tech {
+                background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+                background-size: 400% 400%;
+                animation: gradient 8s ease infinite;
+            }
+            .hover-lift {
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+            .hover-lift:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 20px 40px rgba(6, 182, 212, 0.2);
+            }
+            .knowledge-card {
+                background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+                border: 1px solid rgba(6, 182, 212, 0.1);
+                backdrop-filter: blur(10px);
+                transition: all 0.3s ease;
+            }
+            .knowledge-card:hover {
+                border-color: rgba(6, 182, 212, 0.3);
+                transform: translateY(-2px);
+                box-shadow: 0 10px 30px rgba(6, 182, 212, 0.1);
+            }
+            .search-input {
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(6, 182, 212, 0.1);
+                backdrop-filter: blur(10px);
+                transition: all 0.3s ease;
+            }
+            .search-input:focus {
+                border-color: #06b6d4;
+                box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
+                outline: none;
+            }
+            .category-tag {
+                background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(99, 102, 241, 0.2));
+                border: 1px solid rgba(99, 102, 241, 0.2);
+                transition: all 0.3s ease;
+            }
+            .category-tag:hover {
+                background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(99, 102, 241, 0.3));
+                border-color: rgba(99, 102, 241, 0.4);
+            }
+            .loading-spinner {
+                border: 3px solid rgba(6, 182, 212, 0.1);
+                border-radius: 50%;
+                border-top: 3px solid #06b6d4;
+                width: 24px;
+                height: 24px;
+                animation: spin 1s linear infinite;
+            }
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-tech min-h-screen text-white font-inter">
+    <!-- 导航栏 -->
+    <nav class="glass-effect sticky top-0 z-50 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <div class="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+                    <i class="fa fa-lightbulb-o text-xl"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-gradient">TechKnowledge</h1>
+            </div>
+            
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="#home" class="hover:text-primary transition-colors">首页</a>
+                <a href="#categories" class="hover:text-primary transition-colors">分类</a>
+                <a href="#popular" class="hover:text-primary transition-colors">热门知识</a>
+                <a href="#about" class="hover:text-primary transition-colors">关于</a>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <button class="md:hidden text-xl">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <button class="bg-gradient-to-r from-primary to-secondary px-4 py-2 rounded-lg hover:opacity-90 transition-opacity">
+                    <i class="fa fa-plus mr-2"></i>添加知识
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主页内容 -->
+    <main id="home" class="max-w-7xl mx-auto px-6 py-12">
+        <!-- 英雄区域 -->
+        <section class="text-center mb-20">
+            <h2 class="text-[clamp(2rem,5vw,4rem)] font-bold mb-6 text-gradient">
+                探索科技知识的无限可能
+            </h2>
+            <p class="text-gray-300 text-[clamp(1rem,2vw,1.25rem)] mb-10 max-w-3xl mx-auto">
+                一个集科技、编程、人工智能等前沿知识于一体的知识库，助你快速掌握最新技术动态
+            </p>
+            
+            <!-- 搜索框 -->
+            <div class="max-w-2xl mx-auto relative">
+                <input type="text" id="searchInput" 
+                       class="search-input w-full px-6 py-4 rounded-full text-lg placeholder-gray-400"
+                       placeholder="搜索知识、技术、概念...">
+                <button class="absolute right-3 top-1/2 transform -translate-y-1/2 bg-primary p-3 rounded-full hover:bg-primary/90 transition-colors">
+                    <i class="fa fa-search text-white"></i>
+                </button>
+            </div>
+            
+            <!-- 统计数据 -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16">
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-primary mb-2" id="knowledgeCount">0</div>
+                    <div class="text-gray-400">知识条目</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-secondary mb-2" id="categoryCount">0</div>
+                    <div class="text-gray-400">知识分类</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-accent mb-2" id="viewCount">0</div>
+                    <div class="text-gray-400">总浏览量</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-purple-400 mb-2" id="userCount">0</div>
+                    <div class="text-gray-400">活跃用户</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 知识分类 -->
+        <section id="categories" class="mb-20">
+            <h3 class="text-2xl font-bold mb-8 flex items-center">
+                <i class="fa fa-th-large text-primary mr-3"></i>
+                知识分类
+            </h3>
+            
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="categoryGrid">
+                <!-- 分类标签将通过JavaScript动态生成 -->
+            </div>
+        </section>
+
+        <!-- 热门知识 -->
+        <section id="popular" class="mb-20">
+            <div class="flex justify-between items-center mb-8">
+                <h3 class="text-2xl font-bold flex items-center">
+                    <i class="fa fa-fire text-primary mr-3"></i>
+                    热门知识
+                </h3>
+                <div class="flex space-x-2">
+                    <button class="category-tag px-4 py-2 rounded-full text-sm hover-lift" data-filter="all">全部</button>
+                    <button class="category-tag px-4 py-2 rounded-full text-sm hover-lift" data-filter="trending">趋势</button>
+                    <button class="category-tag px-4 py-2 rounded-full text-sm hover-lift" data-filter="newest">最新</button>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="knowledgeGrid">
+                <!-- 知识卡片将通过JavaScript动态生成 -->
+            </div>
+        </section>
+
+        <!-- 知识详情模态框 -->
+        <div id="knowledgeModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-6">
+            <div class="glass-effect rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 id="modalTitle" class="text-2xl font-bold text-gradient"></h3>
+                        <button id="closeModal" class="text-gray-400 hover:text-white text-xl">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="flex items-center mb-6 text-sm text-gray-400">
+                        <span id="modalCategory" class="category-tag px-3 py-1 rounded-full mr-3"></span>
+                        <span id="modalDate"></span>
+                        <span class="mx-3">•</span>
+                        <span id="modalViews"><i class="fa fa-eye mr-1"></i></span>
+                    </div>
+                    
+                    <div id="modalContent" class="prose prose-invert max-w-none">
+                        <!-- 知识内容将通过JavaScript动态生成 -->
+                    </div>
+                    
+                    <div class="mt-8 flex justify-between items-center">
+                        <div class="flex space-x-4">
+                            <button class="text-gray-400 hover:text-primary transition-colors">
+                                <i class="fa fa-thumbs-up mr-1"></i>
+                                <span id="modalLikes">0</span>
+                            </button>
+                            <button class="text-gray-400 hover:text-primary transition-colors">
+                                <i class="fa fa-bookmark mr-1"></i>收藏
+                            </button>
+                            <button class="text-gray-400 hover:text-primary transition-colors">
+                                <i class="fa fa-share mr-1"></i>分享
+                            </button>
+                        </div>
+                        <button class="bg-gradient-to-r from-primary to-secondary px-6 py-2 rounded-lg hover:opacity-90 transition-opacity">
+                            <i class="fa fa-edit mr-2"></i>编辑知识
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="glass-effect mt-20">
+        <div class="max-w-7xl mx-auto px-6 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+                            <i class="fa fa-lightbulb-o"></i>
+                        </div>
+                        <h4 class="text-xl font-bold text-gradient">TechKnowledge</h4>
+                    </div>
+                    <p class="text-gray-400 mb-4">
+                        探索科技知识的无限可能，让学习变得简单有趣。
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-primary transition-colors">
+                            <i class="fa fa-github"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-primary transition-colors">
+                            <i class="fa fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-primary transition-colors">
+                            <i class="fa fa-linkedin"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">快速链接</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-primary transition-colors">首页</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">分类</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">热门知识</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">关于我们</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">支持</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-primary transition-colors">帮助中心</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">常见问题</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">联系我们</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">隐私政策</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">订阅更新</h4>
+                    <p class="text-gray-400 mb-4">
+                        获取最新的科技知识和技术动态
+                    </p>
+                    <div class="flex">
+                        <input type="email" placeholder="输入您的邮箱" 
+                               class="search-input flex-1 px-4 py-2 rounded-l-lg text-sm">
+                        <button class="bg-primary px-4 py-2 rounded-r-lg hover:bg-primary/90 transition-colors">
+                            <i class="fa fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-500">
+                <p>&copy; 2025 TechKnowledge. 保留所有权利。</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 模拟JSON数据
+        const knowledgeData = {
+            categories: [
+                { id: 1, name: "人工智能", icon: "fa fa-robot", color: "#06b6d4" },
+                { id: 2, name: "编程开发", icon: "fa fa-code", color: "#6366f1" },
+                { id: 3, name: "云计算", icon: "fa fa-cloud", color: "#10b981" },
+                { id: 4, name: "大数据", icon: "fa fa-database", color: "#f59e0b" },
+                { id: 5, name: "网络安全", icon: "fa fa-shield", color: "#ef4444" },
+                { id: 6, name: "区块链", icon: "fa fa-link", color: "#8b5cf6" },
+                { id: 7, name: "移动开发", icon: "fa fa-mobile", color: "#ec4899" },
+                { id: 8, name: "前端技术", icon: "fa fa-desktop", color: "#3b82f6" }
+            ],
+            knowledge: [
+                {
+                    id: 1,
+                    title: "人工智能大模型发展趋势",
+                    category: "人工智能",
+                    content: `
+                        <p>人工智能大模型是当前AI领域最热门的技术方向之一，具有以下发展趋势：</p>
+                        <ul>
+                            <li><strong>多模态融合</strong> - 文本、图像、音频、视频等多种数据类型的深度融合</li>
+                            <li><strong>轻量化部署</strong> - 模型压缩和优化，使其能够在边缘设备上运行</li>
+                            <li><strong>垂直领域深化</strong> - 在医疗、金融、教育等特定领域的专业应用</li>
+                            <li><strong>可解释性增强</strong> - 提高模型决策的透明度和可解释性</li>
+                            <li><strong>自主学习能力</strong> - 模型能够自主学习和适应新的任务和环境</li>
+                        </ul>
+                        <p>大模型技术的发展将深刻改变各行各业的工作方式和商业模式，为社会带来巨大的价值。</p>
+                    `,
+                    date: "2025-11-15",
+                    views: 12450,
+                    likes: 892,
+                    trending: true,
+                    newest: true
+                },
+                {
+                    id: 2,
+                    title: "现代前端开发技术栈",
+                    category: "前端技术",
+                    content: `
+                        <p>现代前端开发已经发展成为一个复杂而成熟的技术体系，主要包括以下核心技术：</p>
+                        <h4>核心框架</h4>
+                        <ul>
+                            <li><strong>React</strong> - Facebook开发的组件化UI库</li>
+                            <li><strong>Vue.js</strong> - 渐进式JavaScript框架</li>
+                            <li><strong>Angular</strong> - Google开发的完整框架</li>
+                        </ul>
+                        <h4>构建工具</h4>
+                        <ul>
+                            <li><strong>Vite</strong> - 下一代前端构建工具</li>
+                            <li><strong>Webpack</strong> - 模块打包工具</li>
+                            <li><strong>Rollup</strong> - 高效的ES模块打包器</li>
+                        </ul>
+                        <h4>样式解决方案</h4>
+                        <ul>
+                            <li><strong>Tailwind CSS</strong> - 实用优先的CSS框架</li>
+                            <li><strong>Sass/Less</strong> - CSS预处理器</li>
+                            <li><strong>CSS Modules</strong> - 模块化CSS</li>
+                        </ul>
+                        <p>现代前端开发强调组件化、响应式设计和性能优化，为用户提供更好的体验。</p>
+                    `,
+                    date: "2025-11-20",
+                    views: 8760,
+                    likes: 654,
+                    trending: true,
+                    newest: false
+                },
+                {
+                    id: 3,
+                    title: "云计算架构设计最佳实践",
+                    category: "云计算",
+                    content: `
+                        <p>云计算架构设计需要考虑多个方面，包括可扩展性、可靠性、安全性和成本效益。以下是一些最佳实践：</p>
+                        <h4>架构原则</h4>
+                        <ul>
+                            <li><strong>微服务架构</strong> - 将应用拆分为小型、独立的服务</li>
+                            <li><strong>无服务器架构</strong> - 使用FaaS(Function as a Service)减少运维负担</li>
+                            <li><strong>容器化部署</strong> - 使用Docker和Kubernetes实现环境一致性</li>
+                        </ul>
+                        <h4>安全考虑</h4>
+                        <ul>
+                            <li><strong>零信任安全模型</strong> - 不信任任何内部或外部的请求</li>
+                            <li><strong>数据加密</strong> - 传输中和静态数据的加密保护</li>
+                            <li><strong>身份认证和授权</strong> - 细粒度的访问控制</li>
+                        </ul>
+                        <h4>性能优化</h4>
+                        <ul>
+                            <li><strong>CDN加速</strong> - 全球内容分发网络</li>
+                            <li><strong>缓存策略</strong> - 多级缓存提高响应速度</li>
+                            <li><strong>负载均衡</strong> - 分布式负载处理</li>
+                        </ul>
+                        <p>良好的云计算架构设计能够支持业务的快速发展，并提供可靠的服务质量。</p>
+                    `,
+                    date: "2025-11-10",
+                    views: 6320,
+                    likes: 421,
+                    trending: false,
+                    newest: false
+                },
+                {
+                    id: 4,
+                    title: "Python数据分析生态系统",
+                    category: "编程开发",
+                    content: `
+                        <p>Python已经成为数据分析领域的首选语言，拥有丰富的库和工具生态系统：</p>
+                        <h4>数据处理</h4>
+                        <ul>
+                            <li><strong>Pandas</strong> - 数据处理和分析的核心库</li>
+                            <li><strong>Numpy</strong> - 数值计算基础库</li>
+                            <li><strong>Dask</strong> - 并行计算库，处理大规模数据</li>
+                        </ul>
+                        <h4>可视化</h4>
+                        <ul>
+                            <li><strong>Matplotlib</strong> - 基础绘图库</li>
+                            <li><strong>Seaborn</strong> - 统计数据可视化</li>
+                            <li><strong>Plotly</strong> - 交互式可视化</li>
+                            <li><strong>Altair</strong> - 声明式可视化库</li>
+                        </ul>
+                        <h4>机器学习</h4>
+                        <ul>
+                            <li><strong>Scikit-learn</strong> - 机器学习算法库</li>
+                            <li><strong>TensorFlow/PyTorch</strong> - 深度学习框架</li>
+                            <li><strong>XGBoost/LightGBM</strong> - 梯度提升算法</li>
+                        </ul>
+                        <h4>大数据处理</h4>
+                        <ul>
+                            <li><strong>PySpark</strong> - Spark的Python API</li>
+                            <li><strong>Dask</strong> - 并行计算库</li>
+                        </ul>
+                        <p>Python数据分析生态系统的丰富性和易用性使其成为数据科学家和分析师的首选工具。</p>
+                    `,
+                    date: "2025-11-25",
+                    views: 9870,
+                    likes: 732,
+                    trending: true,
+                    newest: true
+                },
+                {
+                    id: 5,
+                    title: "网络安全防护体系建设",
+                    category: "网络安全",
+                    content: `
+                        <p>网络安全防护体系是一个多层次、全方位的安全保障系统，包括以下关键组件：</p>
+                        <h4>边界防护</h4>
+                        <ul>
+                            <li><strong>防火墙</strong> - 网络流量过滤和访问控制</li>
+                            <li><strong>入侵检测/防御系统(IDS/IPS)</strong> - 实时威胁检测和阻断</li>
+                            <li><strong>VPN</strong> - 安全的远程访问</li>
+                        </ul>
+                        <h4>终端安全</h4>
+                        <ul>
+                            <li><strong>防病毒软件</strong> - 恶意软件检测和清除</li>
+                            <li><strong>终端检测与响应(EDR)</strong> - 高级威胁检测</li>
+                            <li><strong>应用白名单</strong> - 控制可执行程序</li>
+                        </ul>
+                        <h4>数据安全</h4>
+                        <ul>
+                            <li><strong>加密技术</strong> - 数据加密和密钥管理</li>
+                            <li><strong>数据防泄漏(DLP)</strong> - 防止敏感数据外泄</li>
+                            <li><strong>备份与恢复</strong> - 数据备份和灾难恢复</li>
+                        </ul>
+                        <h4>安全管理</h4>
+                        <ul>
+                            <li><strong>安全信息与事件管理(SIEM)</strong> - 集中式安全监控</li>
+                            <li><strong>漏洞管理</strong> - 定期漏洞扫描和修复</li>
+                            <li><strong>安全培训</strong> - 员工安全意识教育</li>
+                        </ul>
+                        <p>一个完善的网络安全防护体系能够有效抵御各种网络威胁，保护组织的信息资产安全。</p>
+                    `,
+                    date: "2025-11-05",
+                    views: 5430,
+                    likes: 389,
+                    trending: false,
+                    newest: false
+                },
+                {
+                    id: 6,
+                    title: "区块链技术应用与发展",
+                    category: "区块链",
+                    content: `
+                        <p>区块链技术已经从加密货币扩展到多个领域，具有广泛的应用前景：</p>
+                        <h4>金融领域</h4>
+                        <ul>
+                            <li><strong>跨境支付</strong> - 快速、低成本的国际汇款</li>
+                            <li><strong>供应链金融</strong> - 基于区块链的贸易融资</li>
+                            <li><strong>数字资产</strong> - 证券化代币和数字证券</li>
+                        </ul>
+                        <h4>供应链管理</h4>
+                        <ul>
+                            <li><strong>产品溯源</strong> - 从生产到消费的全程追踪</li>
+                            <li><strong>智能合约</strong> - 自动化的合同执行</li>
+                            <li><strong>库存管理</strong> - 透明的库存跟踪</li>
+                        </ul>
+                        <h4>公共服务</h4>
+                        <ul>
+                            <li><strong>身份认证</strong> - 去中心化的身份管理</li>
+                            <li><strong>电子政务</strong> - 透明、高效的政府服务</li>
+                            <li><strong>投票系统</strong> - 安全、可信的电子投票</li>
+                        </ul>
+                        <h4>技术发展趋势</h4>
+                        <ul>
+                            <li><strong>Layer 2解决方案</strong> - 提高交易速度和降低成本</li>
+                            <li><strong>跨链技术</strong> - 不同区块链之间的互操作性</li>
+                            <li><strong>隐私保护</strong> - 零知识证明等隐私技术</li>
+                        </ul>
+                        <p>区块链技术的去中心化、透明性和不可篡改性使其在多个领域具有巨大的应用潜力。</p>
+                    `,
+                    date: "2025-11-18",
+                    views: 7650,
+                    likes: 543,
+                    trending: true,
+                    newest: false
+                }
+            ]
+        };
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeKnowledgeBase();
+            initializeEventListeners();
+            animateStatistics();
+        });
+
+        // 初始化知识库
+        function initializeKnowledgeBase() {
+            renderCategories();
+            renderKnowledgeGrid();
+            updateStatistics();
+        }
+
+        // 渲染分类标签
+        function renderCategories() {
+            const categoryGrid = document.getElementById('categoryGrid');
+            knowledgeData.categories.forEach(category => {
+                const categoryTag = document.createElement('button');
+                categoryTag.className = 'category-tag px-4 py-3 rounded-lg text-center hover-lift';
+                categoryTag.innerHTML = `
+                    <i class="${category.icon} text-2xl block mx-auto mb-2" style="color: ${category.color}"></i>
+                    <span>${category.name}</span>
+                `;
+                categoryTag.addEventListener('click', () => filterByCategory(category.name));
+                categoryGrid.appendChild(categoryTag);
+            });
+        }
+
+        // 渲染知识网格
+        function renderKnowledgeGrid(filter = 'all') {
+            const knowledgeGrid = document.getElementById('knowledgeGrid');
+            knowledgeGrid.innerHTML = '';
+
+            let filteredKnowledge = knowledgeData.knowledge;
+            if (filter === 'trending') {
+                filteredKnowledge = filteredKnowledge.filter(item => item.trending);
+            } else if (filter === 'newest') {
+                filteredKnowledge = filteredKnowledge.sort((a, b) => new Date(b.date) - new Date(a.date));
+            }
+
+            filteredKnowledge.forEach(item => {
+                const knowledgeCard = document.createElement('div');
+                knowledgeCard.className = 'knowledge-card rounded-xl p-6 hover-lift';
+                knowledgeCard.innerHTML = `
+                    <div class="flex items-center mb-4">
+                        <span class="category-tag px-3 py-1 rounded-full text-xs mr-3">${item.category}</span>
+                        <span class="text-xs text-gray-400">${item.date}</span>
+                    </div>
+                    <h4 class="text-xl font-bold mb-3 hover:text-primary transition-colors cursor-pointer knowledge-title">${item.title}</h4>
+                    <p class="text-gray-300 mb-4 line-clamp-3">${stripHtmlTags(item.content).substring(0, 150)}...</p>
+                    <div class="flex justify-between items-center text-sm text-gray-400">
+                        <span><i class="fa fa-eye mr-1"></i>${formatNumber(item.views)}</span>
+                        <span><i class="fa fa-thumbs-up mr-1"></i>${formatNumber(item.likes)}</span>
+                    </div>
+                `;
+                
+                // 添加点击事件
+                knowledgeCard.addEventListener('click', () => showKnowledgeDetails(item));
+                knowledgeGrid.appendChild(knowledgeCard);
+            });
+        }
+
+        // 显示知识详情
+        function showKnowledgeDetails(item) {
+            document.getElementById('modalTitle').textContent = item.title;
+            document.getElementById('modalCategory').textContent = item.category;
+            document.getElementById('modalDate').textContent = item.date;
+            document.getElementById('modalViews').textContent = formatNumber(item.views) + ' 浏览';
+            document.getElementById('modalLikes').textContent = formatNumber(item.likes);
+            document.getElementById('modalContent').innerHTML = item.content;
+            
+            document.getElementById('knowledgeModal').classList.remove('hidden');
+            document.getElementById('knowledgeModal').classList.add('flex');
+            
+            // 增加浏览量
+            item.views++;
+            updateStatistics();
+        }
+
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById('knowledgeModal').classList.add('hidden');
+            document.getElementById('knowledgeModal').classList.remove('flex');
+        }
+
+        // 过滤知识条目
+        function filterByCategory(categoryName) {
+            const filteredKnowledge = knowledgeData.knowledge.filter(item => 
+                item.category === categoryName
+            );
+            renderKnowledgeGridItems(filteredKnowledge);
+        }
+
+        // 渲染知识网格项
+        function renderKnowledgeGridItems(items) {
+            const knowledgeGrid = document.getElementById('knowledgeGrid');
+            knowledgeGrid.innerHTML = '';
+            
+            items.forEach(item => {
+                const knowledgeCard = document.createElement('div');
+                knowledgeCard.className = 'knowledge-card rounded-xl p-6 hover-lift';
+                knowledgeCard.innerHTML = `
+                    <div class="flex items-center mb-4">
+                        <span class="category-tag px-3 py-1 rounded-full text-xs mr-3">${item.category}</span>
+                        <span class="text-xs text-gray-400">${item.date}</span>
+                    </div>
+                    <h4 class="text-xl font-bold mb-3 hover:text-primary transition-colors cursor-pointer knowledge-title">${item.title}</h4>
+                    <p class="text-gray-300 mb-4 line-clamp-3">${stripHtmlTags(item.content).substring(0, 150)}...</p>
+                    <div class="flex justify-between items-center text-sm text-gray-400">
+                        <span><i class="fa fa-eye mr-1"></i>${formatNumber(item.views)}</span>
+                        <span><i class="fa fa-thumbs-up mr-1"></i>${formatNumber(item.likes)}</span>
+                    </div>
+                `;
+                
+                knowledgeCard.addEventListener('click', () => showKnowledgeDetails(item));
+                knowledgeGrid.appendChild(knowledgeCard);
+            });
+        }
+
+        // 更新统计数据
+        function updateStatistics() {
+            document.getElementById('knowledgeCount').textContent = formatNumber(knowledgeData.knowledge.length);
+            document.getElementById('categoryCount').textContent = formatNumber(knowledgeData.categories.length);
+            
+            const totalViews = knowledgeData.knowledge.reduce((sum, item) => sum + item.views, 0);
+            document.getElementById('viewCount').textContent = formatNumber(totalViews);
+            
+            // 模拟用户数
+            document.getElementById('userCount').textContent = formatNumber(Math.floor(totalViews / 10));
+        }
+
+        // 动画统计数据
+        function animateStatistics() {
+            const knowledgeCount = document.getElementById('knowledgeCount');
+            const categoryCount = document.getElementById('categoryCount');
+            const viewCount = document.getElementById('viewCount');
+            const userCount = document.getElementById('userCount');
+            
+            animateNumber(knowledgeCount, 0, knowledgeData.knowledge.length, 1500);
+            animateNumber(categoryCount, 0, knowledgeData.categories.length, 1500);
+            
+            const totalViews = knowledgeData.knowledge.reduce((sum, item) => sum + item.views, 0);
+            animateNumber(viewCount, 0, totalViews, 2000);
+            animateNumber(userCount, 0, Math.floor(totalViews / 10), 2000);
+        }
+
+        // 数字动画
+        function animateNumber(element, start, end, duration) {
+            let startTime = null;
+            const animate = (timestamp) => {
+                if (!startTime) startTime = timestamp;
+                const progress = Math.min((timestamp - startTime) / duration, 1);
+                const value = Math.floor(progress * (end - start) + start);
+                element.textContent = formatNumber(value);
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                }
+            };
+            requestAnimationFrame(animate);
+        }
+
+        // 格式化数字
+        function formatNumber(num) {
+            if (num >= 1000000) {
+                return (num / 1000000).toFixed(1) + 'M';
+            } else if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'K';
+            }
+            return num.toString();
+        }
+
+        // 去除HTML标签
+        function stripHtmlTags(html) {
+            const div = document.createElement('div');
+            div.innerHTML = html;
+            return div.textContent || div.innerText || '';
+        }
+
+        // 初始化事件监听器
+        function initializeEventListeners() {
+            // 搜索功能
+            document.getElementById('searchInput').addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                const filteredKnowledge = knowledgeData.knowledge.filter(item => 
+                    item.title.toLowerCase().includes(searchTerm) || 
+                    item.content.toLowerCase().includes(searchTerm) ||
+                    item.category.toLowerCase().includes(searchTerm)
+                );
+                renderKnowledgeGridItems(filteredKnowledge);
+            });
+
+            // 筛选按钮
+            document.querySelectorAll('[data-filter]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const filter = this.getAttribute('data-filter');
+                    renderKnowledgeGrid(filter);
+                    
+                    // 更新按钮状态
+                    document.querySelectorAll('[data-filter]').forEach(btn => {
+                        btn.classList.remove('bg-gradient-to-r', 'from-primary', 'to-secondary', 'text-white');
+                        btn.classList.add('text-gray-400');
+                    });
+                    this.classList.add('bg-gradient-to-r', 'from-primary', 'to-secondary', 'text-white');
+                    this.classList.remove('text-gray-400');
+                });
+            });
+
+            // 模态框关闭按钮
+            document.getElementById('closeModal').addEventListener('click', closeModal);
+            
+            // 点击模态框外部关闭
+            document.getElementById('knowledgeModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal();
+                }
+            });
+
+            // ESC键关闭模态框
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeModal();
+                }
+            });
+
+            // 平滑滚动
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>

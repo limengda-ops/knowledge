@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechKnowledge - 后台管理系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#06b6d4',
+                        secondary: '#6366f1',
+                        accent: '#10b981',
+                        dark: '#0f172a',
+                        light: '#f8fafc'
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                        'gradient': 'gradient 8s ease infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        glow: {
+                            '0%': { boxShadow: '0 0 20px rgba(6, 182, 212, 0.5)' },
+                            '100%': { boxShadow: '0 0 30px rgba(6, 182, 212, 0.8), 0 0 40px rgba(6, 182, 212, 0.5)' },
+                        },
+                        gradient: {
+                            '0%': { backgroundPosition: '0% 50%' },
+                            '50%': { backgroundPosition: '100% 50%' },
+                            '100%': { backgroundPosition: '0% 50%' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .glass-effect {
+                backdrop-filter: blur(10px);
+                background: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            }
+            .text-gradient {
+                background: linear-gradient(90deg, #06b6d4, #6366f1);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+            .bg-gradient-tech {
+                background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+                background-size: 400% 400%;
+                animation: gradient 8s ease infinite;
+            }
+            .login-card {
+                background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+                border: 1px solid rgba(6, 182, 212, 0.1);
+                backdrop-filter: blur(10px);
+                transition: all 0.3s ease;
+            }
+            .login-input {
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(6, 182, 212, 0.1);
+                backdrop-filter: blur(10px);
+                transition: all 0.3s ease;
+            }
+            .login-input:focus {
+                border-color: #06b6d4;
+                box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
+                outline: none;
+            }
+            .login-button {
+                background: linear-gradient(135deg, #06b6d4, #6366f1);
+                background-size: 200% 200%;
+                animation: gradient 3s ease infinite;
+                transition: all 0.3s ease;
+            }
+            .login-button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 30px rgba(6, 182, 212, 0.3);
+            }
+            .error-message {
+                background: rgba(239, 68, 68, 0.1);
+                border: 1px solid rgba(239, 68, 68, 0.2);
+                color: #ef4444;
+            }
+            .success-message {
+                background: rgba(16, 185, 129, 0.1);
+                border: 1px solid rgba(16, 185, 129, 0.2);
+                color: #10b981;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-tech min-h-screen text-white font-inter flex items-center justify-center p-6">
+    <div class="max-w-md w-full">
+        <div class="text-center mb-8">
+            <div class="w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center mx-auto mb-4">
+                <i class="fa fa-shield text-2xl"></i>
+            </div>
+            <h1 class="text-3xl font-bold text-gradient mb-2">TechKnowledge</h1>
+            <p class="text-gray-400">后台管理系统</p>
+        </div>
+
+        <div class="login-card rounded-2xl p-8">
+            <!-- 消息提示 -->
+            <div id="message" class="hidden mb-6 p-4 rounded-lg"></div>
+
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">用户名</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+                            <i class="fa fa-user"></i>
+                        </span>
+                        <input type="text" id="username" 
+                               class="login-input w-full pl-12 pr-4 py-3 rounded-lg text-white"
+                               placeholder="请输入用户名" required>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">密码</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+                            <i class="fa fa-lock"></i>
+                        </span>
+                        <input type="password" id="password" 
+                               class="login-input w-full pl-12 pr-12 py-3 rounded-lg text-white"
+                               placeholder="请输入密码" required>
+                        <button type="button" id="togglePassword" 
+                                class="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400 hover:text-white">
+                            <i class="fa fa-eye-slash"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center">
+                        <input type="checkbox" id="remember" class="rounded text-primary focus:ring-primary">
+                        <span class="ml-2 text-sm text-gray-400">记住我</span>
+                    </label>
+                    <a href="#" class="text-sm text-primary hover:text-primary/80">忘记密码?</a>
+                </div>
+
+                <button type="submit" class="login-button w-full py-3 rounded-lg font-medium text-white">
+                    <i class="fa fa-sign-in mr-2"></i>
+                    登录系统
+                </button>
+            </form>
+        </div>
+
+        <div class="text-center mt-6 text-sm text-gray-500">
+            <p>© 2025 TechKnowledge. 保留所有权利。</p>
+        </div>
+    </div>
+
+    <script>
+        // 管理员账户信息（实际项目中应该从服务器获取或使用更安全的验证方式）
+        const adminCredentials = {
+            username: 'admin',
+            password: 'admin123'
+        };
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeLoginForm();
+            checkRememberedUser();
+        });
+
+        // 初始化登录表单
+        function initializeLoginForm() {
+            const loginForm = document.getElementById('loginForm');
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('password');
+
+            // 登录表单提交
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                handleLogin();
+            });
+
+            // 切换密码可见性
+            togglePassword.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                this.innerHTML = type === 'password' ? '<i class="fa fa-eye-slash"></i>' : '<i class="fa fa-eye"></i>';
+            });
+        }
+
+        // 检查记住的用户
+        function checkRememberedUser() {
+            const rememberedUser = localStorage.getItem('rememberedUser');
+            if (rememberedUser) {
+                try {
+                    const userData = JSON.parse(rememberedUser);
+                    document.getElementById('username').value = userData.username;
+                    document.getElementById('remember').checked = true;
+                } catch (e) {
+                    localStorage.removeItem('rememberedUser');
+                }
+            }
+        }
+
+        // 处理登录
+        function handleLogin() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const remember = document.getElementById('remember').checked;
+
+            // 验证用户名和密码
+            if (username === adminCredentials.username && password === adminCredentials.password) {
+                // 登录成功
+                showMessage('登录成功，正在进入系统...', 'success');
+                
+                // 记住用户
+                if (remember) {
+                    localStorage.setItem('rememberedUser', JSON.stringify({ username }));
+                } else {
+                    localStorage.removeItem('rememberedUser');
+                }
+
+                // 存储登录状态
+                sessionStorage.setItem('isLoggedIn', 'true');
+                
+                // 延迟跳转，让用户看到成功消息
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+            } else {
+                // 登录失败
+                showMessage('用户名或密码错误，请重试', 'error');
+            }
+        }
+
+        // 显示消息提示
+        function showMessage(message, type) {
+            const messageElement = document.getElementById('message');
+            messageElement.textContent = message;
+            messageElement.className = type === 'error' ? 'error-message p-4 rounded-lg mb-6' : 'success-message p-4 rounded-lg mb-6';
+            messageElement.classList.remove('hidden');
+
+            // 3秒后自动隐藏
+            setTimeout(() => {
+                messageElement.classList.add('hidden');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
